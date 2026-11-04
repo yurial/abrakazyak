@@ -1,0 +1,38 @@
+<resources>
+    <!-- Abrakazyak UI string catalog (specs/ui.md, Interface), English set for uiLanguages.
+         `recommendedMaxPlayers` and the counter N are format arguments (%1$d). -->
+    <string name="app_name">Abrakazyak</string>
+    <string name="rules_title">How to play</string>
+    <string name="rules_body">Pass the phone around. Each player continues the story, seeing only a small piece of the previous line, and leaves a piece for the next player. We recommend playing in a group of up to %1$d people.</string>
+    <string name="rules_play">Play</string>
+    <string name="rules_open">Rules</string>
+    <string name="rules_back">Back to the game</string>
+    <string name="rules_archive">Story archive</string>
+    <string name="names_title">Players</string>
+    <string name="names_hint">Names are optional: with names, authorship is shown when reading</string>
+    <string name="names_add">Add player</string>
+    <string name="names_rounds">Rounds</string>
+    <string name="names_start">Start game</string>
+    <string name="chunk_title_first">Start your story! Only you can see what you are writing now</string>
+    <string name="chunk_title_next">Continue the story</string>
+    <string name="chunk_counter">Characters left: %1$d</string>
+    <string name="chunk_done">Done</string>
+    <string name="chunk_finish">Finish the story</string>
+    <string name="tail_title">Write a small piece for the next player to continue</string>
+    <string name="tail_counter">Characters left: %1$d</string>
+    <string name="tail_done">Done, passing the phone to a friend</string>
+    <string name="tail_finish">Finish the story</string>
+    <string name="finish_title">How shall we end the story?</string>
+    <string name="finish_write">Write the final line</string>
+    <string name="finish_template">Choose a ready-made ending</string>
+    <string name="finish_counter">Characters left: %1$d</string>
+    <string name="finish_done">Finish</string>
+    <string name="story_title">Your story</string>
+    <string name="story_share">Share</string>
+    <string name="story_play_again">Play again</string>
+    <string name="story_archive">Story archive</string>
+    <string name="archive_title">Story archive</string>
+    <string name="resume_title">Continue the interrupted game?</string>
+    <string name="resume_continue">Continue</string>
+    <string name="resume_new">Start a new game</string>
+</resources>
