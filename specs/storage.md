@@ -33,7 +33,7 @@ Spec source of truth for: локальное хранение игры «Abrakaz
 
 - R1. Черновик текущей партии:
 - R1.1. verification=automated; Состояние незавершённой партии автоматически сохраняется локально после каждого подтверждённого шага партии без действия пользователя.
-- R1.2. verification=automated; Сохранённый черновик восстанавливает состояние партии до последнего подтверждённого шага, включая список и порядок участников, текущий ход (`game/turn`), видимый контекст (`game/visible-context`) текущего хода и все написанные тексты.
+- R1.2. verification=automated; Сохранённый черновик восстанавливает состояние партии до последнего подтверждённого шага, включая список и порядок участников, число кругов, текущий ход (`game/turn`), видимый контекст (`game/visible-context`) текущего хода и все написанные тексты.
 - R1.3. verification=automated; Завершение партии удаляет сохранённый черновик.
 - R1.4. verification=automated; Старт новой партии заменяет сохранённый черновик состоянием новой партии.
 - R1.5. verification=automated; Нечитаемый черновик трактуется как отсутствующий и не препятствует старту новой партии.
@@ -79,11 +79,11 @@ Spec source of truth for: локальное хранение игры «Abrakaz
 
 ## Dependencies
 
-- `game` — хранилище сохраняет и возвращает сущности модели партии (`game/match`, `game/turn`, `game/story-chunk`, `game/visible-tail`, `game/visible-context`, `game/finished-story`) и опирается на её ограничения валидности.
+- `game` — хранилище сохраняет и возвращает сущности модели партии (`game/match`, `game/round`, `game/step`, `game/turn`, `game/story-chunk`, `game/visible-tail`, `game/visible-context`, `game/finished-story`) и опирается на её ограничения валидности.
 
 ## Used by
 
-- `ui` — экраны возобновления партии и архива используют операции `loadDraft`, `addFinishedStory`, `listArchiveEntries`, `readArchiveEntry`.
+- `ui` — экраны возобновления партии и архива используют операции `loadDraft`, `clearDraft`, `addFinishedStory`, `listArchiveEntries`, `readArchiveEntry`.
 
 ## Verification
 
