@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Abrakazyak</string>
+    <string name="placeholder_title">Abrakazyak — implementation in progress</string>
+    <string name="placeholder_subtitle">App scaffold. Game logic and screens arrive in later phases.</string>
+</resources>

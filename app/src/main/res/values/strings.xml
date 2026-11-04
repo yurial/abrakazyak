@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Abrakazyak</string>
+    <string name="placeholder_title">Abrakazyak — реализация в процессе</string>
+    <string name="placeholder_subtitle">Каркас приложения. Игровая логика и экраны появятся в следующих фазах.</string>
+</resources>
