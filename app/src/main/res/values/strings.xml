@@ -1,5 +1,40 @@
 <resources>
+    <!-- Abrakazyak UI string catalog (specs/ui.md, Interface):
+         default language is Russian (fallbackLanguage, ui R9.4). Backtick fragments
+         from the spec table are format arguments per the substitution convention:
+         `recommendedMaxPlayers` and the counter N become %1$d. -->
     <string name="app_name">Abrakazyak</string>
-    <string name="placeholder_title">Abrakazyak — реализация в процессе</string>
-    <string name="placeholder_subtitle">Каркас приложения. Игровая логика и экраны появятся в следующих фазах.</string>
+    <string name="rules_title">Правила игры</string>
+    <string name="rules_body">Передавайте телефон по кругу. Каждый игрок продолжает общую историю, видя только маленький кусочек предыдущей фразы, и оставляет кусочек для следующего. Рекомендуем играть компанией до %1$d человек.</string>
+    <string name="rules_play">Играть</string>
+    <string name="rules_open">Правила</string>
+    <string name="rules_back">Вернуться к игре</string>
+    <string name="rules_archive">Архив историй</string>
+    <string name="names_title">Участники</string>
+    <string name="names_hint">Имена по желанию: с ними при чтении видно авторство</string>
+    <string name="names_add">Добавить участника</string>
+    <string name="names_rounds">Число кругов</string>
+    <string name="names_start">Начать игру</string>
+    <string name="chunk_title_first">Начни свою историю! То, что ты сейчас пишешь, видишь только ты</string>
+    <string name="chunk_title_next">Продолжи историю</string>
+    <string name="chunk_counter">Осталось символов: %1$d</string>
+    <string name="chunk_done">Готово</string>
+    <string name="chunk_finish">Завершить историю</string>
+    <string name="tail_title">Напиши маленький кусочек, который продолжит следующий участник</string>
+    <string name="tail_counter">Осталось символов: %1$d</string>
+    <string name="tail_done">Готово, передаю телефон другу</string>
+    <string name="tail_finish">Завершить историю</string>
+    <string name="finish_title">Как завершим историю?</string>
+    <string name="finish_write">Написать финальную реплику</string>
+    <string name="finish_template">Выбрать готовую концовку</string>
+    <string name="finish_counter">Осталось символов: %1$d</string>
+    <string name="finish_done">Завершить</string>
+    <string name="story_title">Ваш рассказ</string>
+    <string name="story_share">Поделиться</string>
+    <string name="story_play_again">Сыграть ещё</string>
+    <string name="story_archive">Архив историй</string>
+    <string name="archive_title">Архив историй</string>
+    <string name="resume_title">Продолжить прерванную игру?</string>
+    <string name="resume_continue">Продолжить</string>
+    <string name="resume_new">Начать новую</string>
 </resources>

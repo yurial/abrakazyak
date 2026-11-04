@@ -1,54 +1,71 @@
 package com.yurial.abrakazyak
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import com.yurial.abrakazyak.ui.AbrakazyakApp
+import com.yurial.abrakazyak.ui.AppViewModel
+import com.yurial.abrakazyak.ui.UiLanguages
 
+/**
+ * Единственная Activity приложения: собирает [AppContainer] и [AppViewModel],
+ * удерживает их при смене конфигурации и передаёт системный «Поделиться» (R7.3).
+ * Вся логика — в чистых JVM-ViewModel; Activity — только wiring.
+ */
 class MainActivity : ComponentActivity() {
+
+    private val retainedModels: RetainedModels by lazy {
+        @Suppress("DEPRECATION")
+        (lastCustomNonConfigurationInstance as? RetainedModels)
+            ?: createRetainedModels()
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onRetainCustomNonConfigurationInstance(): Any = retainedModels
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Локаль могла измениться при пересоздании Activity — концовки пересчитываются (R9.4).
+        retainedModels.appViewModel.updateLanguage(currentLanguageKey())
         setContent {
             MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    PlaceholderScreen(modifier = Modifier.fillMaxSize())
-                }
+                AbrakazyakApp(
+                    appViewModel = retainedModels.appViewModel,
+                    onShare = ::shareStoryText,
+                )
             }
         }
     }
-}
 
-/**
- * Loud placeholder screen of the scaffold phase: intentionally announces that
- * the implementation is in progress instead of imitating a finished UI.
- */
-@Composable
-fun PlaceholderScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(R.string.placeholder_title),
-            style = MaterialTheme.typography.headlineLarge,
+    /** Новый контейнер и корневой ViewModel: вызывается только при первом создании. */
+    private fun createRetainedModels(): RetainedModels {
+        val container = AppContainer(filesDir)
+        val appViewModel = AppViewModel(
+            draftStorage = container.draftStorage,
+            archiveStorage = container.archiveStorage,
+            languageKey = currentLanguageKey(),
         )
-        Text(
-            text = stringResource(R.string.placeholder_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = 16.dp),
-        )
+        return RetainedModels(container, appViewModel)
+    }
+
+    /** Ключ языка интерфейса по системной локали с резервным языком (ui R9.4). */
+    private fun currentLanguageKey(): String =
+        UiLanguages.resolve(resources.configuration.locales[0].language)
+
+    /** Системный диалог «Поделиться» с полным текстом рассказа (R7.3). */
+    private fun shareStoryText(text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        startActivity(Intent.createChooser(intent, null))
     }
 }
+
+/** Держатель вручную собранных зависимостей, переживает пересоздание Activity. */
+private class RetainedModels(
+    val container: AppContainer,
+    val appViewModel: AppViewModel,
+)
