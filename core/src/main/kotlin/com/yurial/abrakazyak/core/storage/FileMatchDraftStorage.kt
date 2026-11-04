@@ -14,6 +14,9 @@ import java.nio.file.StandardCopyOption
  * данных, инжектируемом конструктором (`:app` передаёт filesDir в фазе C).
  * Запись выполняется через временный файл с последующей заменой.
  * Повреждённый (нечитаемый) черновик трактуется как отсутствующий (storage R1.5).
+ * Контракт по операциям: [saveDraft] и [clearDraft] пробрасывают
+ * [java.io.IOException] при сбое файловой системы; [loadDraft] сбоев наружу
+ * не отдаёт — любой сбой чтения даёт null (storage R1.5).
  */
 class FileMatchDraftStorage(private val dataDirectory: Path) : MatchDraftStorage {
 

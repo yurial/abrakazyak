@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -69,6 +70,13 @@ fun NamesScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(text = stringResource(R.string.names_start))
+        }
+        // R2.8: вход в архив с экрана участников; возврат — в NamesScreen-состояние (R8.3).
+        OutlinedButton(
+            onClick = { appViewModel.archiveOpenedFrom(AppViewModel.Screen.NAMES) },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(text = stringResource(R.string.rules_archive))
         }
     }
 }

@@ -21,17 +21,17 @@ interface StoryArchiveStorage {
      * Список записей архива, упорядоченный от новых к старым (storage R2.2):
      * по дате и времени завершения по убыванию; записи с равным моментом
      * завершения упорядочиваются по времени добавления — более поздняя выше.
-     *
-     * @throws java.io.IOException при недоступности каталога данных.
+     * Сбой чтения или повреждённый файл дают пустой архив: ошибок данных
+     * наружу операция не отдаёт.
      */
     fun listArchiveEntries(): List<ArchiveEntry>
 
     /**
      * Возвращает запись архива по идентификатору (storage Interface);
      * неизвестный идентификатор — [StorageError.EntryNotFound], состояние
-     * архива при этом не изменяется (storage Error handling).
-     *
-     * @throws java.io.IOException при недоступности каталога данных.
+     * архива при этом не изменяется (storage Error handling). Сбой чтения
+     * или повреждённый файл дают пустой архив и, как следствие, тот же
+     * [StorageError.EntryNotFound]: ошибок данных наружу операция не отдаёт.
      */
     fun readArchiveEntry(entryId: ArchiveEntryId): StorageResult<ArchiveEntry>
 }

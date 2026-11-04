@@ -9,7 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Каталог строк интерфейса — plain JVM-тест, читающий res/values/strings.xml
  * (русский, по умолчанию) и res/values-en/strings.xml как файлы: parity ключей
  * (ui R9.2), полнота относительно таблицы Interface specs/ui.md, дословность
- * русского текста и конвенция подстановки (ui Interface).
+ * русского и английского текстов и конвенция подстановки (ui Interface).
  */
 class StringsCatalogTest {
 
@@ -93,9 +93,49 @@ class StringsCatalogTest {
     }
 
     @Test
-    fun englishValuesArePresent() {
-        val specKeys: Set<String> = defaultCatalog.keys - "app_name"
-        kotlin.test.assertTrue(specKeys.all { englishCatalog[it]?.isNotBlank() == true })
+    fun englishValuesMatchSpecVerbatim() {
+        // Английский текст — дословно из колонки English таблицы Interface
+        // specs/ui.md; фрагменты в обратных кавычках (`recommendedMaxPlayers`,
+        // счётчик N) — формат %1$d, по образцу русской проверки выше.
+        val expected: Map<String, String> = mapOf(
+            "rules.title" to "How to play",
+            "rules.body" to "Pass the phone around. Each player continues the story, seeing only a small piece of the previous line, and leaves a piece for the next player. We recommend playing in a group of up to %1\$d people.",
+            "rules.play" to "Play",
+            "rules.open" to "Rules",
+            "rules.back" to "Back to the game",
+            "rules.archive" to "Story archive",
+            "names.title" to "Players",
+            "names.hint" to "Names are optional: with names, authorship is shown when reading",
+            "names.add" to "Add player",
+            "names.rounds" to "Rounds",
+            "names.start" to "Start game",
+            "chunk.title.first" to "Start your story! Only you can see what you are writing now",
+            "chunk.title.next" to "Continue the story",
+            "chunk.counter" to "Characters left: %1\$d",
+            "chunk.done" to "Done",
+            "chunk.finish" to "Finish the story",
+            "tail.title" to "Write a small piece for the next player to continue",
+            "tail.counter" to "Characters left: %1\$d",
+            "tail.done" to "Done, passing the phone to a friend",
+            "tail.finish" to "Finish the story",
+            "finish.title" to "How shall we end the story?",
+            "finish.write" to "Write the final line",
+            "finish.template" to "Choose a ready-made ending",
+            "finish.counter" to "Characters left: %1\$d",
+            "finish.done" to "Finish",
+            "story.title" to "Your story",
+            "story.share" to "Share",
+            "story.play-again" to "Play again",
+            "story.archive" to "Story archive",
+            "archive.title" to "Story archive",
+            "resume.title" to "Continue the interrupted game?",
+            "resume.continue" to "Continue",
+            "resume.new" to "Start a new game",
+        )
+        val mismatches: Map<String, Pair<String?, String>> = expected.mapValues { (key, value) ->
+            englishCatalog[key.replace('.', '_').replace('-', '_')] to value
+        }.filter { it.value.first != it.value.second }
+        kotlin.test.assertEquals(emptyMap(), mismatches.mapValues { it.value.first to it.value.second })
     }
 
     @Test
