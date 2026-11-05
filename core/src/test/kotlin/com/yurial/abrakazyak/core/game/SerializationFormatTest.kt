@@ -24,6 +24,9 @@ class SerializationFormatTest {
             Json.decodeFromString<StoryLine>("""{"type":"com.yurial.abrakazyak.core.game.StoryLine.Chunk"}""")
         }
         assertFailsWith<SerializationException> {
+            Json.decodeFromString<StoryLine>("""{"type":"com.yurial.abrakazyak.core.game.StoryLine.Tail"}""")
+        }
+        assertFailsWith<SerializationException> {
             Json.decodeFromString<StoryLine>("""{"type":"com.yurial.abrakazyak.core.game.StoryLine.Ending"}""")
         }
     }
@@ -33,9 +36,15 @@ class SerializationFormatTest {
         val snapshot: MatchSnapshot = Json.decodeFromString(
             """{"participants":[{"name":"Аня"},{"name":null}],"roundCount":1,"turnIndex":0,""" +
                 """"phase":"AWAITING_CHUNK","lines":[{"type":"com.yurial.abrakazyak.core.game.StoryLine.Chunk",""" +
-                """"chunk":{"text":"реплика","authorIndex":0}}],"visibleContext":null}""",
+                """"chunk":{"text":"реплика","authorIndex":0}},""" +
+                """{"type":"com.yurial.abrakazyak.core.game.StoryLine.Tail","text":"хвост","authorIndex":0}],""" +
+                """"visibleContext":null}""",
         )
         assertEquals(listOf(Participant("Аня"), Participant(null)), snapshot.participants)
-        assertEquals(listOf(StoryLine.Chunk(StoryChunk("реплика", 0))), snapshot.lines)
+        assertEquals(
+            listOf(StoryLine.Chunk(StoryChunk("реплика", 0)), StoryLine.Tail("хвост", 0)),
+            snapshot.lines,
+            "хвост — самостоятельная строка данных партии (R4.1)",
+        )
     }
 }

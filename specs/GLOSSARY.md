@@ -6,13 +6,14 @@
 | --- | --- | --- |
 | game/ending | Завершающий текст рассказа: `game/final-reply` либо `game/template-ending`. | game (R3.2, R3.3) |
 | game/final-reply | Финальная реплика: текст в пределах `maxStoryChunkLength`, которым участник завершает партию собственными словами. | game (R3.2) |
-| game/finished-story | Готовый рассказ: соединение всех `game/story-chunk` и `game/ending` в порядке написания; `game/visible-tail` в рассказ не входят. | game (R4.1, R4.2) |
+| game/finished-story | Готовый рассказ: соединение всех `game/story-chunk` и `game/visible-tail` в порядке написания с завершающим `game/ending`; состоит из `game/story-line`. | game (R4.1, R4.2) |
 | game/finishing-turn | Ход завершения: ход, на котором участник завершает партию способом `game/final-reply` или `game/template-ending` вместо обычных шагов; последний ход партии всегда является ходом завершения. | game (R1.10) |
 | game/match | Партия: процесс игры от старта до завершения; включает участников, порядок очереди и написанные тексты. | game (R1.1, R1.5) |
 | game/participant | Участник: игрок, выполняющий ходы в партии; может иметь необязательное имя. | game (R1.3) |
 | game/round | Круг (раунд): часть партии, в которой каждый участник выполняет по одному обычному ходу в порядке очереди. | game (R1.9) |
 | game/step | Шаг: часть обычного хода — ввод `game/story-chunk` либо ввод `game/visible-tail`. | game (R2.1) |
 | game/story-chunk | Реплика: фрагмент истории не длиннее `maxStoryChunkLength`, написанный участником на своём ходе. | game (R2.1, R2.4) |
+| game/story-line | Строка рассказа: одна часть `game/finished-story` — `game/story-chunk`, `game/visible-tail` или `game/ending`, — расположенная отдельной строкой. | game (R4.1) |
 | game/template-ending | Шаблонная концовка: готовый текст из списка `templateEndingsByLanguage`; её выбор завершает партию без финальной реплики. | game (R3.3) |
 | game/turn | Ход: право очередного участника написать реплику и видимый хвост либо завершить партию. | game (R2.1, R3.1) |
 | game/visible-context | Видимый контекст: тексты, доступные текущему участнику на его ходе; пуст на первом ходе, далее — только `game/visible-tail` предыдущего участника. | game (R2.2, R2.3) |

@@ -2,6 +2,7 @@ package com.yurial.abrakazyak.core.game
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /**
  * T1.2 (авторство), T2.1–T2.3 — проверки хода, видимости и граничных текстов.
@@ -92,6 +93,27 @@ class MatchTurnTest {
         match = match.submitChunk("третья").requireSuccess()
         val authorIndexes: List<Int> = match.chunks.map { it.authorIndex }
         assertEquals(listOf(0, 1, 2), authorIndexes)
+    }
+
+    @Test
+    fun currentTurnChunkVisibleOnlyOnTailStep() { // ui R5.8, T5.3: контекст экрана хвоста
+        var match: Match = startMatchOrFail(squad, 1) // ходы 0 и 1 обычные, ход 2 — ход завершения
+        assertNull(match.currentTurnChunk(), "до подтверждения реплики первого хода текста нет")
+        match = match.submitChunk("реплика первого хода").requireSuccess()
+        assertEquals(
+            "реплика первого хода",
+            match.currentTurnChunk(),
+            "на шаге хвоста доступна подтверждённая реплика текущего хода (ui R5.8)",
+        )
+        match = match.submitTail("хвост первого хода").requireSuccess()
+        assertNull(match.currentTurnChunk(), "на шаге реплики следующего хода реплики текущего хода нет")
+        match = match.submitChunk("реплика второго хода").requireSuccess()
+        assertEquals("реплика второго хода", match.currentTurnChunk(), "видна реплика именно текущего хода, а не предыдущего")
+        match = match.submitTail("хвост второго хода").requireSuccess()
+        assertEquals(TurnPhase.AWAITING_FINISH, match.phase)
+        assertNull(match.currentTurnChunk(), "на ходе завершения подтверждённой реплики нет")
+        val finished: Match = match.finishWithTemplate("ru-1").requireSuccess()
+        assertNull(finished.currentTurnChunk(), "после завершения партии текста нет")
     }
 
     @Test

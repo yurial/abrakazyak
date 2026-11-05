@@ -34,7 +34,8 @@ class MatchFinishTest {
         assertEquals(2, finished.finishedStory()?.entries?.lastOrNull()?.authorIndex, "концовка — автор хода завершения")
         assertEquals(TurnPhase.FINISHED, finished.phase)
         val story: FinishedStory = finished.finishedStory() ?: error("рассказ должен существовать")
-        assertEquals(6, story.entries.size, "реплики обычных ходов плюс концовка")
+        assertEquals(11, story.entries.size, "реплики обычных ходов, их хвосты и концовка (R4.1); реплик и концовка — шесть (R1.11)")
+        assertEquals(6, finished.snapshot().lines.count { line: StoryLine -> line !is StoryLine.Tail })
     }
 
     @Test
@@ -64,7 +65,11 @@ class MatchFinishTest {
         match = playOrdinaryTurn(match, "первая реплика", "первый хвост")
         val finished: Match = match.finishWithReply("Хватит, читаем рассказ.").requireSuccess()
         val story: FinishedStory = finished.finishedStory() ?: error("рассказ должен существовать")
-        assertEquals(listOf("первая реплика", "Хватит, читаем рассказ."), story.entries.map { it.text })
+        assertEquals(
+            listOf("первая реплика", "первый хвост", "Хватит, читаем рассказ."),
+            story.entries.map { it.text },
+            "подтверждённый хвост первого хода входит в рассказ (R4.1)",
+        )
     }
 
     @Test
@@ -95,9 +100,9 @@ class MatchFinishTest {
         val finished: Match = match.finishWithReply("вместо целого хода").requireSuccess()
         val story: FinishedStory = finished.finishedStory() ?: error("рассказ должен существовать")
         assertEquals(
-            listOf("реплика-0", "вместо целого хода"),
+            listOf("реплика-0", "хвост-0", "вместо целого хода"),
             story.entries.map { it.text },
-            "реплика и хвост заменённого хода в рассказ не вошли",
+            "заменённый ход не внёс ни реплики, ни хвоста (R3.7)",
         )
     }
 
@@ -109,9 +114,9 @@ class MatchFinishTest {
         val finished: Match = withChunk.finishWithTemplate("ru-2").requireSuccess()
         val story: FinishedStory = finished.finishedStory() ?: error("рассказ должен существовать")
         assertEquals(
-            listOf("реплика-0", "подтверждённая реплика", "Вот такие дела, собачка."),
+            listOf("реплика-0", "хвост-0", "подтверждённая реплика", "Вот такие дела, собачка."),
             story.entries.map { it.text },
-            "подтверждённая реплика осталась, шаг хвоста отброшен",
+            "подтверждённая реплика осталась, неподтверждённый шаг хвоста в рассказ не вошёл (R3.8, R4.2)",
         )
         assertEquals(null, finished.visibleContext, "хвост этого хода не записан")
     }

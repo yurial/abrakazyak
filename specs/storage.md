@@ -39,7 +39,7 @@ Spec source of truth for: локальное хранение игры «Abrakaz
 - R1.5. verification=automated; Нечитаемый черновик трактуется как отсутствующий и не препятствует старту новой партии.
 - R1.6. verification=automated; Набранный, но не подтверждённый текст шага не входит в черновик и при перезапуске приложения теряется.
 - R2. Архив завершённых рассказов:
-- R2.1. verification=automated; Каждая завершённая партия автоматически попадает в архив в виде `storage/archive-entry` с полным текстом `game/finished-story`, авторством реплик при наличии имён участников и датой и временем завершения.
+- R2.1. verification=automated; Каждая завершённая партия автоматически попадает в архив в виде `storage/archive-entry` с полным текстом `game/finished-story`, авторством строк рассказа (`game/story-line`) при наличии имён участников и датой и временем завершения.
 - R2.2. verification=automated; Записи архива упорядочиваются по дате и времени завершения от новых к старым.
 - R2.3. verification=automated; Запись архива остаётся доступной для чтения после перезапуска приложения.
 
@@ -82,7 +82,7 @@ Spec source of truth for: локальное хранение игры «Abrakaz
 
 ## Dependencies
 
-- `game` — хранилище сохраняет и возвращает сущности модели партии (`game/match`, `game/round`, `game/step`, `game/turn`, `game/story-chunk`, `game/visible-tail`, `game/visible-context`, `game/finished-story`) и опирается на её ограничения валидности.
+- `game` — хранилище сохраняет и возвращает сущности модели партии (`game/match`, `game/round`, `game/step`, `game/turn`, `game/story-chunk`, `game/visible-tail`, `game/visible-context`, `game/finished-story`, `game/story-line`) и опирается на её ограничения валидности.
 
 ## Used by
 
