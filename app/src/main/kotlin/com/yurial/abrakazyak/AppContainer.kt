@@ -1,6 +1,5 @@
 package com.yurial.abrakazyak
 
-import android.annotation.SuppressLint
 import com.yurial.abrakazyak.core.storage.FileMatchDraftStorage
 import com.yurial.abrakazyak.core.storage.FileStoryArchiveStorage
 import com.yurial.abrakazyak.core.storage.MatchDraftStorage
@@ -14,12 +13,11 @@ import java.time.Clock
  * файловые хранилища `:core` в каталоге данных приложения. ViewModel-фабрики
  * получают хранилища отсюда.
  *
- * java.nio.file (File#toPath, Path#resolve) исполняется через core library
- * desugaring — desugar_jdk_libs 2.x поддерживает java.nio.file на minSdk 24;
- * lint помечает вызовы из-за неполноты своей базы desugaring-API, поэтому
- * NewApi подавлен точечно на этом wiring-классе.
+ * java.nio.file (File#toPath, Path#resolve) и java.time исполняются на minSdk 24
+ * через core library desugaring — артефакт desugar_jdk_libs_nio покрывает
+ * java.nio.file; дефолтный desugar_jdk_libs его не покрывает и в релизе v0.1.0
+ * приводил к крашу при старте игры (см. DesugaringConformanceTest и TODO.md).
  */
-@SuppressLint("NewApi")
 class AppContainer(dataDirectory: File) {
 
     private val dataPath: Path = dataDirectory.toPath()

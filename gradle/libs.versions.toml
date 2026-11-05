@@ -8,6 +8,9 @@ composeBom = "2026.06.01"
 activityCompose = "1.13.0"
 kotlinxSerializationJson = "1.9.0"
 kotlinxCoroutines = "1.10.2"
+# Core library desugaring: the `nio` artifact, NOT the default one — the
+# default desugar_jdk_libs (any 2.x) does not cover java.nio.file, which :core
+# storage uses (crash "Start game" in v0.1.0; see DesugaringConformanceTest).
 desugarJdkLibs = "2.1.5"
 
 [libraries]
@@ -16,7 +19,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-android-tools-desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+android-tools-desugar-jdk-libs-nio = { module = "com.android.tools:desugar_jdk_libs_nio", version.ref = "desugarJdkLibs" }
+android-tools-desugar-jdk-libs-configuration-nio = { module = "com.android.tools:desugar_jdk_libs_configuration_nio", version.ref = "desugarJdkLibs" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
