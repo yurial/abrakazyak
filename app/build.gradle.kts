@@ -46,7 +46,11 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.android.tools.desugar.jdk.libs)
+    // The `nio` configuration: the default desugar_jdk_libs artifact does not
+    // desugar java.nio.file (used by :core storage), which crashed the app at
+    // the first draft save in v0.1.0 (NoSuchMethodError: Files.writeString).
+    // API coverage is enforced by DesugaringConformanceTest.
+    coreLibraryDesugaring(libs.android.tools.desugar.jdk.libs.nio)
     implementation(project(":core"))
     implementation(libs.kotlinx.coroutines.core)
     implementation(platform(libs.androidx.compose.bom))
@@ -63,4 +67,19 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Lint database of the desugared-library APIs; must track the artifact
+    // wired into coreLibraryDesugaring above (both use the desugarJdkLibs
+    // version ref). Read by DesugaringConformanceTest.
+    testImplementation(libs.android.tools.desugar.jdk.libs.configuration.nio)
 }
+
+// Wiring guard ("Start game" crash, v0.1.0): the default desugar_jdk_libs
+// artifact lacks java.nio.file, so the app crashed on device with
+// NoSuchMethodError at the first saveDraft. java.nio.file requires the nio
+// configuration; DesugaringConformanceTest checks API coverage against it.
+check(
+    configurations.getByName("coreLibraryDesugaring").dependencies.single().let { dependency ->
+        dependency.group == "com.android.tools" && dependency.name == "desugar_jdk_libs_nio"
+    },
+) { "coreLibraryDesugaring must stay on desugar_jdk_libs_nio: java.nio.file from :core requires the nio desugaring configuration" }
