@@ -6,7 +6,8 @@ package com.yurial.abrakazyak.core.game
  *
  * Операции соответствуют Interface specs/game.md: [startMatch], [submitChunk],
  * [submitTail], [finishWithReply], [finishWithTemplate], свойство [visibleContext],
- * [finishedStory]; списки шаблонных концовок — [GameRules.templateEndings].
+ * [currentTurnChunk], [finishedStory]; списки шаблонных концовок —
+ * [GameRules.templateEndings].
  *
  * Каждая операция возвращает новое неизменяемое состояние [Match]; состояние
  * после ошибки не изменяется (Error handling). Возвращённое последним состояние
@@ -54,6 +55,20 @@ class Match internal constructor(
         get() = if (phase == TurnPhase.FINISHED) null else lastTail
 
     /**
+     * Подтверждённая реплика текущего хода — контекст экрана ввода хвоста
+     * (ui R5.8): текст последней подтверждённой реплики, пока ход находится
+     * на шаге хвоста (фаза AWAITING_TAIL). Вне этого шага возвращается null:
+     * до подтверждения реплики (AWAITING_CHUNK — в том числе на первом ходе),
+     * на ходе завершения (AWAITING_FINISH) и после завершения партии (FINISHED).
+     * На шаге хвоста реплика гарантированно существует: фаза достигается
+     * только успешным [submitChunk].
+     */
+    fun currentTurnChunk(): String? {
+        if (phase != TurnPhase.AWAITING_TAIL) return null
+        return chunks.last().text
+    }
+
+    /**
      * Фиксирует реплику текущего хода (R2.1) после валидации текста (R2.4, R2.5).
      * Допустима только на шаге реплики; отклоняется кодами game/invalid-step,
      * game/match-finished, game/empty-text, game/text-too-long.
@@ -78,7 +93,9 @@ class Match internal constructor(
 
     /**
      * Фиксирует видимый хвост текущего хода (R2.1) после валидации текста
-     * (R2.6, R2.7) и передаёт ход следующему участнику (R1.5).
+     * (R2.6, R2.7) и передаёт ход следующему участнику (R1.5). Хвост входит
+     * в список написанных строк партии в порядке написания (R4.1) и
+     * предшествует реплике, которую он начинает (R4.2).
      */
     fun submitTail(text: String): GameResult<Match> {
         val windowError: GameError? = windowErrorFor(TurnPhase.AWAITING_TAIL)
@@ -95,7 +112,7 @@ class Match internal constructor(
             roundCount,
             nextTurnIndex,
             nextPhase,
-            lines,
+            lines + StoryLine.Tail(text, turnIndex % participants.size),
             text,
         )
         return GameResult.Success(next)
@@ -135,6 +152,7 @@ class Match internal constructor(
                     val chunk: StoryChunk = line.chunk
                     FinishedStoryEntry(chunk.text, chunk.authorIndex, participants[chunk.authorIndex].name)
                 }
+                is StoryLine.Tail -> FinishedStoryEntry(line.text, line.authorIndex, participants[line.authorIndex].name)
                 is StoryLine.Ending -> FinishedStoryEntry(line.text, endingAuthorIndex, participants[endingAuthorIndex].name)
             }
         }

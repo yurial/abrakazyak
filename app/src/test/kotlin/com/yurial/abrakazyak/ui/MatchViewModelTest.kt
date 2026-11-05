@@ -113,6 +113,66 @@ class MatchViewModelTest {
     }
 
     @Test
+    fun tailScreenFirstTurnShowsConfirmedChunkWithoutPreviousTail() { // ui R5.7, R5.8, T5.3
+        val model: MatchViewModel = started(players = 3, rounds = 1)
+        model.onChunkDraftChange("реплика первого хода")
+        model.submitChunk()
+        val state = model.state.value
+        assertEquals(Screen.TAIL, state.activeScreen)
+        assertNull(state.match?.visibleContext, "первый ход: хвоста предыдущего участника нет (R5.7)")
+        assertEquals(
+            "реплика первого хода",
+            state.match?.currentTurnChunk(),
+            "подтверждённая реплика текущего хода доходит до экрана хвоста (R5.8)",
+        )
+    }
+
+    @Test
+    fun tailScreenNextTurnShowsPreviousTailAndCurrentChunk() { // ui R5.7, R5.8, T5.3
+        val model: MatchViewModel = started(players = 3, rounds = 2)
+        model.onChunkDraftChange("реплика 0")
+        model.submitChunk()
+        model.onTailDraftChange("хвост 0")
+        model.submitTail()
+        model.onChunkDraftChange("реплика 1")
+        model.submitChunk()
+        val state = model.state.value
+        assertEquals(Screen.TAIL, state.activeScreen)
+        assertEquals("хвост 0", state.match?.visibleContext, "хвост предыдущего участника в состоянии (R5.7)")
+        assertEquals(
+            "реплика 1",
+            state.match?.currentTurnChunk(),
+            "подтверждённая реплика второго хода в состоянии (R5.8); порядок чтения «хвост, затем реплика» задаёт компоновка экрана",
+        )
+    }
+
+    @Test
+    fun finishedStoryWithTailsReachesOutcomeAndArchiveInOrder() { // game R4.1, R4.2, ui R7.1, storage R2.1
+        val archive: FakeArchiveStorage = FakeArchiveStorage()
+        val model: MatchViewModel = started(archive = archive, players = 3, rounds = 1)
+        model.onChunkDraftChange("реплика 0")
+        model.submitChunk()
+        model.onTailDraftChange("хвост 0")
+        model.submitTail()
+        model.onChunkDraftChange("реплика 1")
+        model.submitChunk()
+        model.openFinish()
+        model.onFinishDraftChange("Финал")
+        val outcome: Outcome = model.finishWithReply()
+        val story = assertIs<Outcome.Finished>(outcome).story
+        assertEquals(
+            listOf("реплика 0", "хвост 0", "реплика 1", "Финал"),
+            story.entries.map { it.text },
+            "хвост входит в рассказ между репликами в порядке написания (game R4.1, R4.2)",
+        )
+        assertEquals(
+            listOf(story),
+            archive.added,
+            "рассказ с хвостами и авторством строк попадает в архив тем же объектом (storage R2.1)",
+        )
+    }
+
+    @Test
     fun submitTailReturnsToChunkOfNextTurn() {
         val model: MatchViewModel = started(players = 3, rounds = 1)
         model.onChunkDraftChange("реплика")
@@ -192,7 +252,7 @@ class MatchViewModelTest {
         val outcome: Outcome = model.finishWithReply()
         val story = assertIs<Outcome.Finished>(outcome).story
         assertEquals(listOf("подтверждённая реплика", "Финал"), story.entries.map { it.text })
-        // Хвост не входит в готовый рассказ (game R4.2); сессия завершена.
+        // Неподтверждённый шаг хвоста этого хода в рассказ не входит (game R3.8, R4.2); сессия завершена.
         assertNull(model.state.value.activeScreen)
         assertEquals(story, model.state.value.finishedStory)
     }
@@ -289,6 +349,11 @@ class MatchViewModelTest {
         assertEquals("", state.tailDraft)
         assertEquals(0, state.match?.turnIndex)
         assertNull(state.match?.visibleContext)
+        assertEquals(
+            "реплика 0",
+            state.match?.currentTurnChunk(),
+            "восстановленный ход несёт реплику для контекста экрана хвоста (R5.8): переход не теряет данные",
+        )
     }
 
     @Test

@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -24,7 +25,10 @@ import com.yurial.abrakazyak.core.game.GameRules
 /**
  * `screen-tail` (ui R5): заголовок (R5.1), поле видимого хвоста с жёстким
  * лимитом (R5.2), счётчик (R5.3), кнопка `tail.done` (R5.4) и `tail.finish` (R5.6).
- * Подтверждённая реплика хода остаётся в рассказе при завершении (R5.6).
+ * Перед полем ввода, в порядке чтения: видимый хвост предыдущего участника
+ * (на первом ходе отсутствует, R5.7) и подтверждённая реплика текущего хода
+ * (R5.8) — без подписей, различимые блоки. Подтверждённая реплика хода
+ * остаётся в рассказе при завершении (R5.6).
  */
 @Composable
 fun TailScreen(
@@ -50,6 +54,18 @@ fun TailScreen(
         )
         if (turnIndex > 0) {
             VisibleContextCard(visibleContext = state.match?.visibleContext ?: "")
+        }
+        // Подтверждённая реплика текущего хода после хвоста предыдущего участника,
+        // перед полем ввода (R5.8); рамочный блок отличает её от хвоста (R5.7).
+        val confirmedChunk: String? = state.match?.currentTurnChunk()
+        if (confirmedChunk != null) {
+            OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = confirmedChunk,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(12.dp),
+                )
+            }
         }
         OutlinedTextField(
             value = state.tailDraft,

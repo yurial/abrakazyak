@@ -23,7 +23,11 @@ class MatchSnapshotTest {
         assertEquals(2, snapshot.roundCount)
         assertEquals(1, snapshot.turnIndex)
         assertEquals(TurnPhase.AWAITING_CHUNK, snapshot.phase)
-        assertEquals(listOf(StoryLine.Chunk(StoryChunk("реплика-0", 0))), snapshot.lines)
+        assertEquals(
+            listOf(StoryLine.Chunk(StoryChunk("реплика-0", 0)), StoryLine.Tail("хвост-0", 0)),
+            snapshot.lines,
+            "подтверждённые тексты шагов — реплика и хвост — в порядке написания (storage R1.2)",
+        )
         assertEquals("хвост-0", snapshot.visibleContext)
     }
 
@@ -56,7 +60,7 @@ class MatchSnapshotTest {
         assertEquals(active, decodedActive)
         assertEquals(active, Match.fromSnapshot(decodedActive).snapshot())
 
-        val finished: Match = playToNaturalFinish(squad, 1) // строки: реплики и концовка обоих видов
+        val finished: Match = playToNaturalFinish(squad, 1) // строки всех видов: реплики, хвосты, концовка
         val done: MatchSnapshot = finished.snapshot()
         val decodedDone: MatchSnapshot = Json.decodeFromString(Json.encodeToString(done))
         assertEquals(done, decodedDone)

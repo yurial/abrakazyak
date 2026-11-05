@@ -166,7 +166,8 @@ class AppViewModelTest {
         val state = model.state.value
         assertEquals(Screen.STORY, state.screen)
         assertEquals(StoryMode.FINISHED_MATCH, state.story?.mode)
-        assertEquals("Первая реплика\nКонец истории", state.story?.story?.text)
+        // Хвост входит в рассказ между репликами (game R4.1, R4.2).
+        assertEquals("Первая реплика\nхвостик\nКонец истории", state.story?.story?.text)
         // storage R1.3 и R2.1: черновик удалён, рассказ в архиве.
         assertEquals(1, drafts.clearedCount)
         assertEquals(1, archive.added.size)
